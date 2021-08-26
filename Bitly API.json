@@ -1,0 +1,1443 @@
+{
+	"info": {
+		"_postman_id": "f9e4bf95-694e-45e7-9d47-095faee4132a",
+		"name": "Bitly API",
+		"description": "Contact Support:\n Email: api@bitly.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "organizations",
+			"item": [
+				{
+					"name": "Retrieve Organizations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Setting organisation_guid to collection variable\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.collectionVariables.set(\"organization_guid\", jsonData.organizations[0].guid);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/organizations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organizations"
+							]
+						},
+						"description": "Retrieve a list of organizations."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "groups",
+			"item": [
+				{
+					"name": "Retrieve Group guid",
+					"item": [
+						{
+							"name": "Retrieve Groups",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Setting group_guid in collection variable\r",
+											"var jsonData = pm.response.json();\r",
+											"pm.collectionVariables.set(\"group_guid\",jsonData.groups[0].guid);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/groups?organization_guid={{organization_guid}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"groups"
+									],
+									"query": [
+										{
+											"key": "organization_guid",
+											"value": "{{organization_guid}}",
+											"description": "A GUID for organization"
+										}
+									]
+								},
+								"description": "Returns a list of groups in the organization."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Retrieve a Group",
+					"item": [
+						{
+							"name": "Retrieve a Group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Verify HTTP status \r",
+											"eval(pm.collectionVariables.get(\"testHttpStatus200\"))();\r",
+											"\r",
+											"//Verify Response payload\r",
+											"pm.test(\"Group details are included\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"created\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"modified\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"guid\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"organization_guid\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"name\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"is_active\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"role\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"references\");\r",
+											"});\r",
+											"\r",
+											"//Schema Validation\r",
+											"var schema = {\r",
+											"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+											"    \"$id\": \"http://example.com/example.json\",\r",
+											"    \"type\": \"object\",\r",
+											"    \"required\": [\r",
+											"        \"created\",\r",
+											"        \"modified\",\r",
+											"        \"bsds\",\r",
+											"        \"guid\",\r",
+											"        \"organization_guid\",\r",
+											"        \"name\",\r",
+											"        \"is_active\",\r",
+											"        \"role\",\r",
+											"        \"references\"\r",
+											"    ],\r",
+											"    \"properties\": {\r",
+											"        \"created\": {\r",
+											"            \"$id\": \"#/properties/created\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"modified\": {\r",
+											"            \"$id\": \"#/properties/modified\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"bsds\": {\r",
+											"            \"$id\": \"#/properties/bsds\",\r",
+											"            \"type\": \"array\",\r",
+											"            \"additionalItems\": true,\r",
+											"            \"items\": {\r",
+											"                \"$id\": \"#/properties/bsds/items\"\r",
+											"            }\r",
+											"        },\r",
+											"        \"guid\": {\r",
+											"            \"$id\": \"#/properties/guid\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"organization_guid\": {\r",
+											"            \"$id\": \"#/properties/organization_guid\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"name\": {\r",
+											"            \"$id\": \"#/properties/name\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"is_active\": {\r",
+											"            \"$id\": \"#/properties/is_active\",\r",
+											"            \"type\": \"boolean\"\r",
+											"        },\r",
+											"        \"role\": {\r",
+											"            \"$id\": \"#/properties/role\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"references\": {\r",
+											"            \"$id\": \"#/properties/references\",\r",
+											"            \"type\": \"object\",\r",
+											"            \"required\": [\r",
+											"                \"organization\"\r",
+											"            ],\r",
+											"            \"properties\": {\r",
+											"                \"organization\": {\r",
+											"                    \"$id\": \"#/properties/references/properties/organization\",\r",
+											"                    \"type\": \"string\"\r",
+											"                }\r",
+											"            },\r",
+											"            \"additionalProperties\": true\r",
+											"        }\r",
+											"    },\r",
+											"    \"additionalProperties\": true\r",
+											"};\r",
+											"pm.test('Validate Schema', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/groups/:group_guid",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"groups",
+										":group_guid"
+									],
+									"variable": [
+										{
+											"key": "group_guid",
+											"value": "{{group_guid}}",
+											"description": "(Required) A GUID for a Bitly group"
+										}
+									]
+								},
+								"description": "Returns details for a group."
+							},
+							"response": []
+						},
+						{
+							"name": "Retrieve a Group : invalid group_guid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Verify HTTP status \r",
+											"eval(pm.collectionVariables.get(\"testHttpStatus403\"))();\r",
+											"\r",
+											"//Verify Response payload\r",
+											"pm.test(\"Error details are included\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"message\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"resource\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"description\");\r",
+											"});\r",
+											"\r",
+											"//Schema Validation\r",
+											"var schema = {\r",
+											"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+											"    \"$id\": \"http://example.com/example.json\",\r",
+											"    \"type\": \"object\",\r",
+											"    \"required\": [\r",
+											"        \"message\",\r",
+											"        \"resource\",\r",
+											"        \"description\"\r",
+											"    ],\r",
+											"    \"properties\": {\r",
+											"        \"message\": {\r",
+											"            \"$id\": \"#/properties/message\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"resource\": {\r",
+											"            \"$id\": \"#/properties/resource\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"description\": {\r",
+											"            \"$id\": \"#/properties/description\",\r",
+											"            \"type\": \"string\"\r",
+											"        }\r",
+											"    },\r",
+											"    \"additionalProperties\": true\r",
+											"};\r",
+											"pm.test('Validate Schema', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/groups/:group_guid",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"groups",
+										":group_guid"
+									],
+									"variable": [
+										{
+											"key": "group_guid",
+											"value": "{{invalidGroup_guid}}",
+											"description": "(Required) A GUID for a Bitly group"
+										}
+									]
+								},
+								"description": "Returns details for a group."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Retrieve Sorted Bitlinks for Group",
+					"item": [
+						{
+							"name": "SortedBitlinks with Mandatory Params only",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Verify HTTP status \r",
+											"eval(pm.collectionVariables.get(\"testHttpStatus200\"))();\r",
+											"\r",
+											"//Verify Response payload\r",
+											"pm.test(\"Group details are included\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"links\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"sorted_links\");\r",
+											"});\r",
+											"\r",
+											"//Schema Validation\r",
+											"var schema = {\r",
+											"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+											"    \"$id\": \"http://example.com/example.json\",\r",
+											"    \"type\": \"object\",\r",
+											"    \"required\": [\r",
+											"        \"links\",\r",
+											"        \"sorted_links\"\r",
+											"    ],\r",
+											"    \"properties\": {\r",
+											"        \"links\": {\r",
+											"            \"$id\": \"#/properties/links\",\r",
+											"            \"type\": \"array\",\r",
+											"            \"additionalItems\": true,\r",
+											"            \"items\": {\r",
+											"                \"$id\": \"#/properties/links/items\",\r",
+											"                \"anyOf\": [\r",
+											"                    {\r",
+											"                        \"$id\": \"#/properties/links/items/anyOf/0\",\r",
+											"                        \"type\": \"object\",\r",
+											"                        \"required\": [\r",
+											"                            \"created_at\",\r",
+											"                            \"id\",\r",
+											"                            \"link\",\r",
+											"                            \"custom_bitlinks\",\r",
+											"                            \"long_url\",\r",
+											"                            \"title\",\r",
+											"                            \"archived\",\r",
+											"                            \"created_by\",\r",
+											"                            \"client_id\",\r",
+											"                            \"tags\",\r",
+											"                            \"deeplinks\",\r",
+											"                            \"references\"\r",
+											"                        ],\r",
+											"                        \"properties\": {\r",
+											"                            \"created_at\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/created_at\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"id\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/id\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"link\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/link\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"custom_bitlinks\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/custom_bitlinks\",\r",
+											"                                \"type\": \"array\",\r",
+											"                                \"additionalItems\": true,\r",
+											"                                \"items\": {\r",
+											"                                    \"$id\": \"#/properties/links/items/anyOf/0/properties/custom_bitlinks/items\"\r",
+											"                                }\r",
+											"                            },\r",
+											"                            \"long_url\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/long_url\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"title\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/title\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"archived\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/archived\",\r",
+											"                                \"type\": \"boolean\"\r",
+											"                            },\r",
+											"                            \"created_by\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/created_by\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"client_id\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/client_id\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"tags\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/tags\",\r",
+											"                                \"type\": \"array\",\r",
+											"                                \"additionalItems\": true,\r",
+											"                                \"items\": {\r",
+											"                                    \"$id\": \"#/properties/links/items/anyOf/0/properties/tags/items\"\r",
+											"                                }\r",
+											"                            },\r",
+											"                            \"deeplinks\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/deeplinks\",\r",
+											"                                \"type\": \"array\",\r",
+											"                                \"additionalItems\": true,\r",
+											"                                \"items\": {\r",
+											"                                    \"$id\": \"#/properties/links/items/anyOf/0/properties/deeplinks/items\"\r",
+											"                                }\r",
+											"                            },\r",
+											"                            \"references\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/references\",\r",
+											"                                \"type\": \"object\",\r",
+											"                                \"required\": [\r",
+											"                                    \"group\"\r",
+											"                                ],\r",
+											"                                \"properties\": {\r",
+											"                                    \"group\": {\r",
+											"                                        \"$id\": \"#/properties/links/items/anyOf/0/properties/references/properties/group\",\r",
+											"                                        \"type\": \"string\"\r",
+											"                                    }\r",
+											"                                },\r",
+											"                                \"additionalProperties\": true\r",
+											"                            }\r",
+											"                        },\r",
+											"                        \"additionalProperties\": true\r",
+											"                    }\r",
+											"                ]\r",
+											"            }\r",
+											"        },\r",
+											"        \"sorted_links\": {\r",
+											"            \"$id\": \"#/properties/sorted_links\",\r",
+											"            \"type\": \"array\",\r",
+											"            \"additionalItems\": true,\r",
+											"            \"items\": {\r",
+											"                \"$id\": \"#/properties/sorted_links/items\",\r",
+											"                \"anyOf\": [\r",
+											"                    {\r",
+											"                        \"$id\": \"#/properties/sorted_links/items/anyOf/0\",\r",
+											"                        \"type\": \"object\",\r",
+											"                        \"required\": [\r",
+											"                            \"id\",\r",
+											"                            \"clicks\"\r",
+											"                        ],\r",
+											"                        \"properties\": {\r",
+											"                            \"id\": {\r",
+											"                                \"$id\": \"#/properties/sorted_links/items/anyOf/0/properties/id\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"clicks\": {\r",
+											"                                \"$id\": \"#/properties/sorted_links/items/anyOf/0/properties/clicks\",\r",
+											"                                \"type\": \"integer\"\r",
+											"                            }\r",
+											"                        },\r",
+											"                        \"additionalProperties\": true\r",
+											"                    }\r",
+											"                ]\r",
+											"            }\r",
+											"        }\r",
+											"    },\r",
+											"    \"additionalProperties\": true\r",
+											"};\r",
+											"pm.test('Validate Schema', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/groups/:group_guid/bitlinks/:sort",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"groups",
+										":group_guid",
+										"bitlinks",
+										":sort"
+									],
+									"query": [
+										{
+											"key": "unit",
+											"value": "day",
+											"description": "A unit of time",
+											"disabled": true
+										},
+										{
+											"key": "units",
+											"value": "-1",
+											"description": "An integer representing the time units to query data for. pass -1 to return all units of time.",
+											"disabled": true
+										},
+										{
+											"key": "unit_reference",
+											"value": "2021-08-25T09:36:37-0000",
+											"description": "An ISO-8601 timestamp, indicating the most recent time for which to pull metrics. Will default to current time.",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "The quantity of items to be be returned",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "group_guid",
+											"value": "{{group_guid}}",
+											"description": "(Required) A GUID for a Bitly group"
+										},
+										{
+											"key": "sort",
+											"value": "clicks",
+											"description": "(Required) The type of sorting that you would like to do"
+										}
+									]
+								},
+								"description": "Returns a list of Bitlinks sorted by group."
+							},
+							"response": []
+						},
+						{
+							"name": "SortedBitlinks with Optional Params",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Verify HTTP status \r",
+											"eval(pm.collectionVariables.get(\"testHttpStatus200\"))();\r",
+											"\r",
+											"//Verify Response payload\r",
+											"pm.test(\"Group details are included\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"links\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"sorted_links\");\r",
+											"});\r",
+											"\r",
+											"//Verify the Size entered is matching with the return response\r",
+											"pm.test( \"The items returned matches the size value\", function () {\r",
+											"pm.expect(1).to.eql(pm.response.json().links.length);\r",
+											"}); \r",
+											"\r",
+											"//Schema Validation\r",
+											"var schema = {\r",
+											"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+											"    \"$id\": \"http://example.com/example.json\",\r",
+											"    \"type\": \"object\",\r",
+											"    \"required\": [\r",
+											"        \"links\",\r",
+											"        \"sorted_links\"\r",
+											"    ],\r",
+											"    \"properties\": {\r",
+											"        \"links\": {\r",
+											"            \"$id\": \"#/properties/links\",\r",
+											"            \"type\": \"array\",\r",
+											"            \"additionalItems\": true,\r",
+											"            \"items\": {\r",
+											"                \"$id\": \"#/properties/links/items\",\r",
+											"                \"anyOf\": [\r",
+											"                    {\r",
+											"                        \"$id\": \"#/properties/links/items/anyOf/0\",\r",
+											"                        \"type\": \"object\",\r",
+											"                        \"required\": [\r",
+											"                            \"created_at\",\r",
+											"                            \"id\",\r",
+											"                            \"link\",\r",
+											"                            \"custom_bitlinks\",\r",
+											"                            \"long_url\",\r",
+											"                            \"title\",\r",
+											"                            \"archived\",\r",
+											"                            \"created_by\",\r",
+											"                            \"client_id\",\r",
+											"                            \"tags\",\r",
+											"                            \"deeplinks\",\r",
+											"                            \"references\"\r",
+											"                        ],\r",
+											"                        \"properties\": {\r",
+											"                            \"created_at\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/created_at\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"id\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/id\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"link\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/link\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"custom_bitlinks\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/custom_bitlinks\",\r",
+											"                                \"type\": \"array\",\r",
+											"                                \"additionalItems\": true,\r",
+											"                                \"items\": {\r",
+											"                                    \"$id\": \"#/properties/links/items/anyOf/0/properties/custom_bitlinks/items\"\r",
+											"                                }\r",
+											"                            },\r",
+											"                            \"long_url\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/long_url\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"title\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/title\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"archived\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/archived\",\r",
+											"                                \"type\": \"boolean\"\r",
+											"                            },\r",
+											"                            \"created_by\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/created_by\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"client_id\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/client_id\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"tags\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/tags\",\r",
+											"                                \"type\": \"array\",\r",
+											"                                \"additionalItems\": true,\r",
+											"                                \"items\": {\r",
+											"                                    \"$id\": \"#/properties/links/items/anyOf/0/properties/tags/items\"\r",
+											"                                }\r",
+											"                            },\r",
+											"                            \"deeplinks\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/deeplinks\",\r",
+											"                                \"type\": \"array\",\r",
+											"                                \"additionalItems\": true,\r",
+											"                                \"items\": {\r",
+											"                                    \"$id\": \"#/properties/links/items/anyOf/0/properties/deeplinks/items\"\r",
+											"                                }\r",
+											"                            },\r",
+											"                            \"references\": {\r",
+											"                                \"$id\": \"#/properties/links/items/anyOf/0/properties/references\",\r",
+											"                                \"type\": \"object\",\r",
+											"                                \"required\": [\r",
+											"                                    \"group\"\r",
+											"                                ],\r",
+											"                                \"properties\": {\r",
+											"                                    \"group\": {\r",
+											"                                        \"$id\": \"#/properties/links/items/anyOf/0/properties/references/properties/group\",\r",
+											"                                        \"type\": \"string\"\r",
+											"                                    }\r",
+											"                                },\r",
+											"                                \"additionalProperties\": true\r",
+											"                            }\r",
+											"                        },\r",
+											"                        \"additionalProperties\": true\r",
+											"                    }\r",
+											"                ]\r",
+											"            }\r",
+											"        },\r",
+											"        \"sorted_links\": {\r",
+											"            \"$id\": \"#/properties/sorted_links\",\r",
+											"            \"type\": \"array\",\r",
+											"            \"additionalItems\": true,\r",
+											"            \"items\": {\r",
+											"                \"$id\": \"#/properties/sorted_links/items\",\r",
+											"                \"anyOf\": [\r",
+											"                    {\r",
+											"                        \"$id\": \"#/properties/sorted_links/items/anyOf/0\",\r",
+											"                        \"type\": \"object\",\r",
+											"                        \"required\": [\r",
+											"                            \"id\",\r",
+											"                            \"clicks\"\r",
+											"                        ],\r",
+											"                        \"properties\": {\r",
+											"                            \"id\": {\r",
+											"                                \"$id\": \"#/properties/sorted_links/items/anyOf/0/properties/id\",\r",
+											"                                \"type\": \"string\"\r",
+											"                            },\r",
+											"                            \"clicks\": {\r",
+											"                                \"$id\": \"#/properties/sorted_links/items/anyOf/0/properties/clicks\",\r",
+											"                                \"type\": \"integer\"\r",
+											"                            }\r",
+											"                        },\r",
+											"                        \"additionalProperties\": true\r",
+											"                    }\r",
+											"                ]\r",
+											"            }\r",
+											"        }\r",
+											"    },\r",
+											"    \"additionalProperties\": true\r",
+											"};\r",
+											"pm.test('Validate Schema', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/groups/:group_guid/bitlinks/:sort?unit=day&units=-1&unit_reference=2021-08-24T09:36:37-0000&size=1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"groups",
+										":group_guid",
+										"bitlinks",
+										":sort"
+									],
+									"query": [
+										{
+											"key": "unit",
+											"value": "day",
+											"description": "A unit of time"
+										},
+										{
+											"key": "units",
+											"value": "-1",
+											"description": "An integer representing the time units to query data for. pass -1 to return all units of time."
+										},
+										{
+											"key": "unit_reference",
+											"value": "2021-08-24T09:36:37-0000",
+											"description": "An ISO-8601 timestamp, indicating the most recent time for which to pull metrics. Will default to current time."
+										},
+										{
+											"key": "size",
+											"value": "1",
+											"description": "The quantity of items to be be returned"
+										}
+									],
+									"variable": [
+										{
+											"key": "group_guid",
+											"value": "{{group_guid}}",
+											"description": "(Required) A GUID for a Bitly group"
+										},
+										{
+											"key": "sort",
+											"value": "clicks",
+											"description": "(Required) The type of sorting that you would like to do"
+										}
+									]
+								},
+								"description": "Returns a list of Bitlinks sorted by group."
+							},
+							"response": []
+						},
+						{
+							"name": "SortedBitlinks with UnitReferenceCheck",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Verify HTTP status \r",
+											"eval(pm.collectionVariables.get(\"testHttpStatus200\"))();\r",
+											"\r",
+											"pm.test(\"No links created before the unit reference date \" , function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.links).to.eql([]);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/groups/:group_guid/bitlinks/:sort?unit=day&units=-1&unit_reference=2021-08-23T04:33:24-0000&size=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"groups",
+										":group_guid",
+										"bitlinks",
+										":sort"
+									],
+									"query": [
+										{
+											"key": "unit",
+											"value": "day",
+											"description": "A unit of time"
+										},
+										{
+											"key": "units",
+											"value": "-1",
+											"description": "An integer representing the time units to query data for. pass -1 to return all units of time."
+										},
+										{
+											"key": "unit_reference",
+											"value": "2021-08-23T04:33:24-0000",
+											"description": "An ISO-8601 timestamp, indicating the most recent time for which to pull metrics. Will default to current time."
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "The quantity of items to be be returned"
+										}
+									],
+									"variable": [
+										{
+											"key": "group_guid",
+											"value": "{{group_guid}}",
+											"description": "(Required) A GUID for a Bitly group"
+										},
+										{
+											"key": "sort",
+											"value": "clicks",
+											"description": "(Required) The type of sorting that you would like to do"
+										}
+									]
+								},
+								"description": "Returns a list of Bitlinks sorted by group."
+							},
+							"response": []
+						},
+						{
+							"name": "SortedBitlinks without group_guid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Verify HTTP status \r",
+											"eval(pm.collectionVariables.get(\"testHttpStatus400\"))();\r",
+											"\r",
+											"//Verify Response payload\r",
+											"pm.test(\"Error details are included\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.message).to.eql(\"MISSING_PARAM_GROUPGUID\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/groups/:group_guid/bitlinks/:sort",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"groups",
+										":group_guid",
+										"bitlinks",
+										":sort"
+									],
+									"query": [
+										{
+											"key": "unit",
+											"value": "day",
+											"description": "A unit of time",
+											"disabled": true
+										},
+										{
+											"key": "units",
+											"value": "-1",
+											"description": "An integer representing the time units to query data for. pass -1 to return all units of time.",
+											"disabled": true
+										},
+										{
+											"key": "unit_reference",
+											"value": "2021-08-25T09:36:37-0000",
+											"description": "An ISO-8601 timestamp, indicating the most recent time for which to pull metrics. Will default to current time.",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "The quantity of items to be be returned",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "group_guid",
+											"value": "",
+											"description": "(Required) A GUID for a Bitly group"
+										},
+										{
+											"key": "sort",
+											"value": "clicks",
+											"description": "(Required) The type of sorting that you would like to do"
+										}
+									]
+								},
+								"description": "Returns a list of Bitlinks sorted by group."
+							},
+							"response": []
+						},
+						{
+							"name": "SortedBitlinks invalid group_guid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Verify HTTP status \r",
+											"eval(pm.collectionVariables.get(\"testHttpStatus403\"))();\r",
+											"\r",
+											"//Verify Response payload\r",
+											"pm.test(\"Error details are included\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include(\"message\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"resource\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"description\");\r",
+											"});\r",
+											"\r",
+											"//Schema Validation\r",
+											"var schema = {\r",
+											"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+											"    \"$id\": \"http://example.com/example.json\",\r",
+											"    \"type\": \"object\",\r",
+											"    \"required\": [\r",
+											"        \"message\",\r",
+											"        \"resource\",\r",
+											"        \"description\"\r",
+											"    ],\r",
+											"    \"properties\": {\r",
+											"        \"message\": {\r",
+											"            \"$id\": \"#/properties/message\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"resource\": {\r",
+											"            \"$id\": \"#/properties/resource\",\r",
+											"            \"type\": \"string\"\r",
+											"        },\r",
+											"        \"description\": {\r",
+											"            \"$id\": \"#/properties/description\",\r",
+											"            \"type\": \"string\"\r",
+											"        }\r",
+											"    },\r",
+											"    \"additionalProperties\": true\r",
+											"};\r",
+											"pm.test('Validate Schema', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/groups/:group_guid/bitlinks/:sort",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"groups",
+										":group_guid",
+										"bitlinks",
+										":sort"
+									],
+									"query": [
+										{
+											"key": "unit",
+											"value": "day",
+											"description": "A unit of time",
+											"disabled": true
+										},
+										{
+											"key": "units",
+											"value": "-1",
+											"description": "An integer representing the time units to query data for. pass -1 to return all units of time.",
+											"disabled": true
+										},
+										{
+											"key": "unit_reference",
+											"value": "2021-08-25T09:36:37-0000",
+											"description": "An ISO-8601 timestamp, indicating the most recent time for which to pull metrics. Will default to current time.",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "The quantity of items to be be returned",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "group_guid",
+											"value": "{{invalidGroup_guid}}",
+											"description": "(Required) A GUID for a Bitly group"
+										},
+										{
+											"key": "sort",
+											"value": "clicks",
+											"description": "(Required) The type of sorting that you would like to do"
+										}
+									]
+								},
+								"description": "Returns a list of Bitlinks sorted by group."
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "bitlinks",
+			"item": [
+				{
+					"name": "Create a Bitlink",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Verify HTTP status \r",
+									"pm.test(\"Status code is 201 Created\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"//Verify Response payload\r",
+									"pm.test(\"New Bitlink is created\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"created_at\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"id\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"link\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"long_url\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"title\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"tags\");\r",
+									"});\r",
+									"\r",
+									"//Schema Validation\r",
+									"var schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"required\": [\r",
+									"        \"created_at\",\r",
+									"        \"id\",\r",
+									"        \"link\",\r",
+									"        \"custom_bitlinks\",\r",
+									"        \"long_url\",\r",
+									"        \"title\",\r",
+									"        \"archived\",\r",
+									"        \"tags\",\r",
+									"        \"deeplinks\",\r",
+									"        \"references\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"created_at\": {\r",
+									"            \"$id\": \"#/properties/created_at\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"id\": {\r",
+									"            \"$id\": \"#/properties/id\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"link\": {\r",
+									"            \"$id\": \"#/properties/link\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"custom_bitlinks\": {\r",
+									"            \"$id\": \"#/properties/custom_bitlinks\",\r",
+									"            \"type\": \"array\",\r",
+									"            \"additionalItems\": true,\r",
+									"            \"items\": {\r",
+									"                \"$id\": \"#/properties/custom_bitlinks/items\"\r",
+									"            }\r",
+									"        },\r",
+									"        \"long_url\": {\r",
+									"            \"$id\": \"#/properties/long_url\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"title\": {\r",
+									"            \"$id\": \"#/properties/title\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"archived\": {\r",
+									"            \"$id\": \"#/properties/archived\",\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"tags\": {\r",
+									"            \"$id\": \"#/properties/tags\",\r",
+									"            \"type\": \"array\",\r",
+									"            \"additionalItems\": true,\r",
+									"            \"items\": {\r",
+									"                \"$id\": \"#/properties/tags/items\",\r",
+									"                \"anyOf\": [\r",
+									"                    {\r",
+									"                        \"$id\": \"#/properties/tags/items/anyOf/0\",\r",
+									"                        \"type\": \"string\"\r",
+									"                    }\r",
+									"                ]\r",
+									"            }\r",
+									"        },\r",
+									"        \"deeplinks\": {\r",
+									"            \"$id\": \"#/properties/deeplinks\",\r",
+									"            \"type\": \"array\",\r",
+									"            \"additionalItems\": true,\r",
+									"            \"items\": {\r",
+									"                \"$id\": \"#/properties/deeplinks/items\"\r",
+									"            }\r",
+									"        },\r",
+									"        \"references\": {\r",
+									"            \"$id\": \"#/properties/references\",\r",
+									"            \"type\": \"object\",\r",
+									"            \"required\": [\r",
+									"                \"group\"\r",
+									"            ],\r",
+									"            \"properties\": {\r",
+									"                \"group\": {\r",
+									"                    \"$id\": \"#/properties/references/properties/group\",\r",
+									"                    \"type\": \"string\"\r",
+									"                }\r",
+									"            },\r",
+									"            \"additionalProperties\": true\r",
+									"        }\r",
+									"    },\r",
+									"    \"additionalProperties\": true\r",
+									"};\r",
+									"pm.test('Validate Schema', function () {\r",
+									"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var randomCountry = pm.variables.replaceIn('{{$randomCountry}}');\r",
+									"pm.collectionVariables.set(\"title\", randomCountry);\r",
+									"pm.collectionVariables.set(\"long_url\", (\"https://en.wikipedia.org/wiki/\" + randomCountry));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"domain\": \"bit.ly\",\n    \"title\": \"{{title}}\",\n    \"group_guid\": \"{{group_guid}}\",\n    \"tags\": [\n        \"bitly\",\n        \"api\"\n    ],\n    \n    \"long_url\": \"{{long_url}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bitlinks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bitlinks"
+							]
+						},
+						"description": "Converts a long url to a Bitlink and sets additional parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "CreateBitlink - Invalid group_guid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Verify HTTP status \r",
+									"eval(pm.collectionVariables.get(\"testHttpStatus403\"))();\r",
+									"\r",
+									"//Verify Response payload\r",
+									"pm.test(\"Error details are included\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"message\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"resource\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"description\");\r",
+									"});\r",
+									"\r",
+									"//Schema Validation\r",
+									"var schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"required\": [\r",
+									"        \"message\",\r",
+									"        \"resource\",\r",
+									"        \"description\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"message\": {\r",
+									"            \"$id\": \"#/properties/message\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"resource\": {\r",
+									"            \"$id\": \"#/properties/resource\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"description\": {\r",
+									"            \"$id\": \"#/properties/description\",\r",
+									"            \"type\": \"string\"\r",
+									"        }\r",
+									"    },\r",
+									"    \"additionalProperties\": true\r",
+									"};\r",
+									"pm.test('Validate Schema', function () {\r",
+									"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var randomCountry = pm.variables.replaceIn('{{$randomCountry}}');\r",
+									"pm.collectionVariables.set(\"title\", randomCountry);\r",
+									"pm.collectionVariables.set(\"long_url\", (\"https://en.wikipedia.org/wiki/\" + randomCountry));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"domain\": \"bit.ly\",\n    \"title\": \"{{title}}\",\n    \"group_guid\": \"{{invalidGroup_guid}}\",\n    \"tags\": [\n        \"bitly\",\n        \"api\"\n    ],\n    \n    \"long_url\": \"{{long_url}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bitlinks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bitlinks"
+							]
+						},
+						"description": "Converts a long url to a Bitlink and sets additional parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "CreateBitlink - Invalid long_url",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Verify HTTP status \r",
+									"eval(pm.collectionVariables.get(\"testHttpStatus400\"))();\r",
+									"\r",
+									"//Verify Response payload\r",
+									"pm.test(\"Error details are included\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"message\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"resource\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"description\");\r",
+									"});\r",
+									"\r",
+									"//Schema Validation\r",
+									"var schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"required\": [\r",
+									"        \"message\",\r",
+									"        \"resource\",\r",
+									"        \"description\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"message\": {\r",
+									"            \"$id\": \"#/properties/message\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"resource\": {\r",
+									"            \"$id\": \"#/properties/resource\",\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"description\": {\r",
+									"            \"$id\": \"#/properties/description\",\r",
+									"            \"type\": \"string\"\r",
+									"        }\r",
+									"    },\r",
+									"    \"additionalProperties\": true\r",
+									"};\r",
+									"pm.test('Validate Schema', function () {\r",
+									"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"domain\": \"bit.ly\",\n    \"title\": \"Bitly API Documentation\",\n    \"group_guid\": \"{{group_guid}}\",\n    \"tags\": [\n        \"bitly\",\n        \"api\"\n    ],\n    \n    \"long_url\": \"wall\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bitlinks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bitlinks"
+							]
+						},
+						"description": "Converts a long url to a Bitlink and sets additional parameters."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "56feb0c4b177bd0d62f02c97f14e4c94a2b0eec9",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"//Response Time Verification",
+					"pm.test(\"Response time is less than 500ms\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(4000);",
+					"});",
+					"",
+					"//Verify Response Header",
+					"pm.test(\"Content-Type header is application/json\", function () {",
+					"  pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+					"});",
+					"",
+					"//Verify HTTP status 200 OK",
+					"var testHttpStatus200 = () => {  ",
+					"    pm.test(\"Status code is 200\", function () {",
+					"        pm.response.to.have.status(200);",
+					"    });",
+					"}",
+					"pm.collectionVariables.set(\"testHttpStatus200\", testHttpStatus200.toString());",
+					"",
+					"//Verify HTTP status 403 Forbidden",
+					"var testHttpStatus403 = () => {",
+					"    pm.test(\"Status code is 403\", function () {",
+					"        pm.response.to.have.status(403);",
+					"    });",
+					"}",
+					"pm.collectionVariables.set(\"testHttpStatus403\", testHttpStatus403.toString());",
+					"",
+					"//Verify HTTP status 400 Bad Request",
+					"var testHttpStatus400 = () => {",
+					"    pm.test(\"Status code is 400\", function () {",
+					"        pm.response.to.have.status(400);",
+					"    });",
+					"}",
+					"pm.collectionVariables.set(\"testHttpStatus400\", testHttpStatus400.toString());",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://api-ssl.bitly.com/v4"
+		},
+		{
+			"key": "organization_guid",
+			"value": ""
+		},
+		{
+			"key": "group_guid",
+			"value": ""
+		},
+		{
+			"key": "testHttpStatus200",
+			"value": ""
+		},
+		{
+			"key": "testHttpStatus403",
+			"value": ""
+		},
+		{
+			"key": "testHttpStatus404",
+			"value": ""
+		},
+		{
+			"key": "testHttpStatus400",
+			"value": ""
+		},
+		{
+			"key": "invalidGroup_guid",
+			"value": "Ba1bc23dE4F123"
+		},
+		{
+			"key": "long_url",
+			"value": ""
+		},
+		{
+			"key": "title",
+			"value": ""
+		}
+	]
+}
